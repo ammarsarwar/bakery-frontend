@@ -17,9 +17,15 @@ export const AuthProvider = ({ children }) => {
     return false;
   });
 
+  // const login = (token) => {
+  //   localStorage.setItem("authToken", token);
+  //   setIsAuthenticated(true);
+  // };
+
   const login = (token) => {
     localStorage.setItem("authToken", token);
     setIsAuthenticated(true);
+    // Force a full page reload
   };
 
   const logout = () => {

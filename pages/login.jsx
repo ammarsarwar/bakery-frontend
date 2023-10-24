@@ -1,26 +1,42 @@
 // pages/Login.jsx
-
-import axios from "axios";
 import { useState } from "react";
+import axios from "axios";
+import { useRouter } from "next/router";
+import { useAuth } from "../contexts/AuthContext";
 
 export default function Login() {
+  const { login } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
 
+  const router = useRouter();
+
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:3000/login", {
-        email,
-        password,
-      });
+      const response = await axios.post(
+        "http://localhost:3000/api/users/login",
+        {
+          email,
+          password,
+        }
+      );
       if (response.data.token) {
         // Store token in localStorage or in a cookie
         localStorage.setItem("authToken", response.data.token);
+        login(response.data.token);
+        // login(response.data.token);
+        // Redirect to home page or some other page
+
+        router.push("/");
+      } else {
+        // Handle errors, for example, show a message to the user
+        console.error("Login failed:", response.data.message);
       }
     } catch (err) {
-      setError(err.response.data.message);
+      console.log("Error details:", err.response);
+      setError(err.response?.data?.message || "An error occurred");
     }
   };
 

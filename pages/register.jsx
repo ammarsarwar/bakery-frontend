@@ -1,7 +1,7 @@
 // pages/Register.jsx
-
-import axios from "axios";
 import { useState } from "react";
+import axios from "axios";
+import { useRouter } from "next/router";
 
 export default function Register() {
   const [name, setName] = useState("");
@@ -9,6 +9,7 @@ export default function Register() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState(null);
+  const router = useRouter();
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -20,15 +21,26 @@ export default function Register() {
     }
 
     try {
-      const response = await axios.post("http://localhost:3000/register", {
-        name,
-        email,
-        password,
-      });
+      const response = await axios.post(
+        "http://localhost:3000/api/users/register",
+        {
+          name,
+          email,
+          password,
+        }
+      );
+      if (response.status === 201) {
+        // Redirect to login page or show a success message
+        console.log("user created");
+        router.push("/login");
+      } else {
+        // Handle errors, for example, show a message to the user
+        console.error("Registration failed:", response.data.message);
+      }
       // On successful registration, you can redirect to login or directly log the user in
       // depending on your requirements.
     } catch (err) {
-      setError(err.response.data.message);
+      setError(err.response?.data.message);
     }
   };
 
